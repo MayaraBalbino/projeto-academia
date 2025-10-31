@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  aluno: one
+  plano: one
+  data_pagamento: 2025-10-30
+  data_vencimento: 2025-10-30
+  valor: 9.99
+  forma_pagamento: MyString
+  referente_a: MyString
+  status: MyString
+
+two:
+  aluno: two
+  plano: two
+  data_pagamento: 2025-10-30
+  data_vencimento: 2025-10-30
+  valor: 9.99
+  forma_pagamento: MyString
+  referente_a: MyString
+  status: MyString

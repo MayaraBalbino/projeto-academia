@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nome_plano: MyString
+  descricao: MyString
+  valor_mensal: 9.99
+  duracao_meses: 1
+
+two:
+  nome_plano: MyString
+  descricao: MyString
+  valor_mensal: 9.99
+  duracao_meses: 1

@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  aluno: one
+  atividade_fisica: one
+  data_inicio: 2025-10-30
+  data_fim: 2025-10-30
+  dias_semana: MyString
+
+two:
+  aluno: two
+  atividade_fisica: two
+  data_inicio: 2025-10-30
+  data_fim: 2025-10-30
+  dias_semana: MyString

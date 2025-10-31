@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nome_atividade: MyString
+  descricao: MyText
+  nivel_dificuldade: MyString
+  duracao_minutos: 1
+  calorias_estimadas: 1
+  professor: one
+
+two:
+  nome_atividade: MyString
+  descricao: MyText
+  nivel_dificuldade: MyString
+  duracao_minutos: 1
+  calorias_estimadas: 1
+  professor: two

@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  aluno: one
+  professor: one
+  objetivo: MyString
+  data_inicio: 2025-10-30
+  data_fim: 2025-10-30
+  observacoes: MyText
+
+two:
+  aluno: two
+  professor: two
+  objetivo: MyString
+  data_inicio: 2025-10-30
+  data_fim: 2025-10-30
+  observacoes: MyText

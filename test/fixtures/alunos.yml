@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  nome: MyString
+  cpf: MyString
+  email: MyString
+  telefone: MyString
+  data_nascimento: 2025-10-30
+  status: MyString
+  plano: one
+
+two:
+  nome: MyString
+  cpf: MyString
+  email: MyString
+  telefone: MyString
+  data_nascimento: 2025-10-30
+  status: MyString
+  plano: two
