@@ -8,6 +8,7 @@ AllCops:
     - 'Rakefile'
     - 'setup.rb'
     - 'spec/**/*'
+    - 'app/**/*'
 # Overwrite or add rules to create your own house style
 #
 # # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
