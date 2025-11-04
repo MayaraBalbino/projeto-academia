@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# A sample pre-build hook
+# A sample p re-build hook
 #
 # Checks:
 # 1. We have a clean checkout
