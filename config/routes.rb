@@ -18,4 +18,10 @@ Rails.application.routes.draw do
   resources :pagamentos
   resources :professores
   resources :treinos
+
+  devise_for :alunos,
+             controllers: {
+                 sessions: 'alunos/sessions',
+                 registrations: 'alunos/registrations'
+             }
 end
