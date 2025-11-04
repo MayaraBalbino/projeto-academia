@@ -15,4 +15,7 @@ Rails.application.routes.draw do
   resources :alunos do
     resources :atividades, controller: 'aluno_atividades'
   end
+  resources :pagamentos
+  resources :professores
+  resources :treinos
 end
