@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-md-12 text-center">
+      <h1>📊 Dashboard - Academia</h1>
+      <p class="text-muted">Gerencie os registros da academia</p>
+    </div>
+  </div>
+
+  <div class="row justify-content-center g-4">
+    <div class="col-md-6">
+      <%= link_to alunos_path, class: "btn btn-primary w-100 py-4" do %>
+        <div class="fs-1">👥</div>
+        <div class="mt-2 fs-5">Alunos</div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-6">
+      <%= link_to professores_path, class: "btn btn-info w-100 py-4" do %>
+        <div class="fs-1">🎓</div>
+        <div class="mt-2 fs-5">Professores</div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-6">
+      <%= link_to planos_path, class: "btn btn-success w-100 py-4" do %>
+        <div class="fs-1">📋</div>
+        <div class="mt-2 fs-5">Planos</div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-6">
+      <%= link_to pagamentos_path, class: "btn btn-warning w-100 py-4" do %>
+        <div class="fs-1">💰</div>
+        <div class="mt-2 fs-5">Pagamentos</div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-6">
+      <%= link_to treinos_path, class: "btn btn-danger w-100 py-4" do %>
+        <div class="fs-1">🏋️</div>
+        <div class="mt-2 fs-5">Treinos</div>
+      <% end %>
+    </div>
+    
+    <div class="col-md-6">
+      <%= link_to dashboard_export_csv_path, class: "btn btn-outline-secondary w-100 py-4" do %>
+        <div class="fs-1">📥</div>
+        <div class="mt-2 fs-5">Exportar CSV</div>
+      <% end %>
+    </div>
+  </div>
+</div>

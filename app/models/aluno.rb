@@ -1,12 +1,19 @@
 class Aluno < ApplicationRecord
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable,
-         :jwt_authenticatable, jwt_revocation_strategy: self # <-- Adicione isso
+  belongs_to :plano, optional: false
   
-  # Adicione esta linha (para a "lista negra" de tokens):
-  include Devise::JWT::RevocationStrategies::JTIMatcher
-  belongs_to :plano
+  before_validation :clean_cpf
+  
+  validates :nome, :cpf, :email, presence: true
+  validates :cpf, :email, uniqueness: true
+  validates :cpf, length: { is: 11 }, format: { with: /\A\d{11}\z/, message: "deve conter apenas números" }
+  validates :plano_id, presence: true
 
-  has_many :aluno_atividades
-  has_many :atividades_fisicas, through: :aluno_atividades
+  has_many :pagamentos
+  has_many :treinos
+
+  private
+
+  def clean_cpf
+    self.cpf = cpf.to_s.gsub(/\D/, '') if cpf.present?
+  end
 end

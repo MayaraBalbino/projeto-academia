@@ -1,27 +1,44 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
-  get "up" => "rails/health#show", as: :rails_health_check
-
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
-
-  # Defines the root path route ("/")
-  # root "posts#index"
-  resources :planos
-  resources :alunos do
-    resources :atividades, controller: 'aluno_atividades'
+  devise_for :users, controllers: { sessions: 'users/sessions' }
+  get 'dashboard/export_csv', to: 'home#export_dashboard_csv', defaults: { format: :csv }
+  
+  get 'profile', to: 'users#profile'
+  patch 'profile', to: 'users#update_profile'
+  
+  root "home#index"
+  
+  resources :alunos, only: [:index, :show, :edit, :update, :destroy, :new, :create] do
+    collection do
+      get :export_pdf
+    end
   end
-  resources :pagamentos
-  resources :professores
-  resources :treinos
+  
+  resources :professores, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
+    collection do
+      get :export_pdf
+    end
+  end
+  
+  resources :planos, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
+    collection do
+      get :export_pdf
+    end
+  end
+  
+  resources :pagamentos, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
+    collection do
+      get :export_pdf
+    end
+    member do
+      get :aluno_data
+    end
+  end
+  
+  resources :treinos, only: [:new, :create, :index, :show, :edit, :update, :destroy] do
+    collection do
+      get :export_pdf
+    end
+  end
 
-  devise_for :alunos,
-             controllers: {
-                 sessions: 'alunos/sessions',
-                 registrations: 'alunos/registrations'
-             }
+  get "up" => "rails/health#show", as: :rails_health_check
 end

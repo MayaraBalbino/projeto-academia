@@ -1,40 +1,80 @@
-class PlanosController < ActionController::API
-  before_action :set_plano, only: [:show, :update, :destroy]
+require 'csv'
 
-  # GET /planos
+class PlanosController < ApplicationController
+  before_action :set_plano, only: [:show, :edit, :update, :destroy]
+
   def index
-    @planos = Plano.all
-    render json: @planos
+    @planos = Plano.page(params[:page]).per(10)
   end
 
-  # GET /planos:id
-  def show
-    render json: @plano
+  def new
+    @plano = Plano.new
   end
 
-  # POST /planos
   def create
     @plano = Plano.new(plano_params)
     if @plano.save
-      render json: @plano, status: :created
+      redirect_to planos_path, notice: 'Plano criado com sucesso.'
     else
-      render json: @plano.errors, status: :unprocessable_entity
+      render :new
     end
   end
 
-  # PATCH/PUT /planos/:id
+  def show
+  end
+
+  def edit
+  end
+
   def update
     if @plano.update(plano_params)
-      render json: @plano
+      redirect_to planos_path, notice: 'Plano atualizado com sucesso.'
     else
-      render json: @plano.errors, status: :unprocessable_entity
+      render :edit
     end
-  end 
+  end
 
-  # DELETE /planos/:id
   def destroy
-    @plano.destroy
-    head :no_content
+    begin
+      @plano.destroy
+      redirect_to planos_path, notice: 'Plano deletado com sucesso.'
+    rescue ActiveRecord::InvalidForeignKey
+      redirect_to planos_path, alert: '⚠️ Não é possível deletar este plano porque ele está vinculado a alunos. Remova os alunos deste plano primeiro.'
+    end
+  end
+
+  def export_csv
+    @planos = Plano.all
+    respond_to do |format|
+      format.csv { 
+        send_data csv_planos, filename: "planos_#{Date.today}.csv"
+      }
+    end
+  end
+
+  def export_pdf
+    @planos = Plano.all
+    respond_to do |format|
+      format.pdf do
+        pdf = PdfTableExporter.generate(
+          title: 'Relatório de Planos',
+          headers: ['ID', 'Nome', 'Descrição', 'Duração (meses)', 'Valor mensal'],
+          rows: @planos.map do |plano|
+            [
+              plano.id,
+              plano.nome_plano,
+              plano.descricao,
+              plano.duracao_meses,
+              plano.valor_mensal
+            ]
+          end
+        )
+        send_data pdf.render,
+                  filename: "planos_#{Date.today}.pdf",
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
   end
 
   private
@@ -47,4 +87,12 @@ class PlanosController < ActionController::API
     params.require(:plano).permit(:nome_plano, :descricao, :valor_mensal, :duracao_meses)
   end
 
+  def csv_planos
+    CSV.generate(headers: true) do |csv|
+      csv << ['ID', 'Nome do Plano', 'Valor Mensal', 'Duração']
+      Plano.all.each do |plano|
+        csv << [plano.id, plano.nome_plano, plano.valor_mensal, plano.duracao_meses]
+      end
+    end
+  end
 end

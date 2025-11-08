@@ -1,0 +1,28 @@
+pt-BR:
+  helpers:
+    submit:
+      create: "Criar %{model}"
+      update: "Atualizar %{model}"
+      submit: "Salvar %{model}"
+  activerecord:
+    models:
+      user: "Usuário"
+      aluno: "Aluno"
+      professor: "Professor"
+      plano: "Plano"
+      pagamento: "Pagamento"
+      treino: "Treino"
+    attributes:
+      user:
+        nome: "Nome"
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+      aluno:
+        nome: "Nome"
+        cpf: "CPF"
+        email: "E-mail"
+        telefone: "Telefone"
+        data_nascimento: "Data de Nascimento"
+        status: "Status"
+        plano_id: "Plano"
