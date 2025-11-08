@@ -1,0 +1,30 @@
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Valor</th>
+        <th>Duração</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% planos.each do |plano| %>
+        <tr>
+          <td><%= plano.id %></td>
+          <td><%= plano.nome_plano %></td>
+          <td>R$ <%= number_with_precision(plano.valor_mensal, precision: 2) %></td>
+          <td><%= plano.duracao_meses %> meses</td>
+          <td>
+            <%= link_to "✏️", edit_plano_path(plano), class: "btn btn-sm btn-warning" %>
+            <%= link_to "🗑️", plano_path(plano), method: :delete, data: { confirm: "Tem certeza?" }, class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="d-flex justify-content-center mt-3">
+  <%= paginate planos %>
+</div>

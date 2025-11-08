@@ -1,0 +1,60 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-warning">
+          <h5 class="mb-0">✏️ Editar Treino</h5>
+        </div>
+        <div class="card-body">
+          <form action="/treinos/<%= @treino.id %>" method="POST">
+            <input type="hidden" name="_method" value="PATCH">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            
+            <div class="mb-3">
+              <label class="form-label">Aluno</label>
+              <select name="treino[aluno_id]" class="form-select" required>
+                <% Aluno.all.each do |aluno| %>
+                  <option value="<%= aluno.id %>" <%= 'selected' if @treino.aluno_id == aluno.id %>><%= aluno.nome %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Professor</label>
+              <select name="treino[professor_id]" class="form-select" required>
+                <% Professor.all.each do |prof| %>
+                  <option value="<%= prof.id %>" <%= 'selected' if @treino.professor_id == prof.id %>><%= prof.nome %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Objetivo</label>
+              <input type="text" name="treino[objetivo]" class="form-control" value="<%= @treino.objetivo %>">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Data Início</label>
+              <input type="date" name="treino[data_inicio]" class="form-control" value="<%= @treino.data_inicio&.strftime('%Y-%m-%d') %>">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Data Fim</label>
+              <input type="date" name="treino[data_fim]" class="form-control" value="<%= @treino.data_fim&.strftime('%Y-%m-%d') %>">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Observações</label>
+              <textarea name="treino[observacoes]" class="form-control" rows="3"><%= @treino.observacoes %></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="/treinos" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

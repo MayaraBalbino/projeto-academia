@@ -1,0 +1,30 @@
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Especialidade</th>
+        <th>Email</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% professores.each do |prof| %>
+        <tr>
+          <td><%= prof.id %></td>
+          <td><%= prof.nome %></td>
+          <td><%= prof.especialidade %></td>
+          <td><%= prof.email %></td>
+          <td>
+            <%= link_to "✏️", edit_professor_path(prof), class: "btn btn-sm btn-warning" %>
+            <%= link_to "🗑️", professor_path(prof), method: :delete, data: { confirm: "Tem certeza?" }, class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="d-flex justify-content-center mt-3">
+  <%= paginate professores %>
+</div>

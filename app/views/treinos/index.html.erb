@@ -1,0 +1,45 @@
+<div class="container mt-5">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>🏋️ Treinos</h1>
+    <div class="mb-3">
+      <a href="/treinos/new" class="btn btn-success">➕ Adicionar</a>
+      <a href="/treinos/export_pdf?format=pdf" class="btn btn-warning">📄 Exportar PDF</a>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Aluno</th>
+          <th>Professor</th>
+          <th>Objetivo</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @treinos.each do |treino| %>
+          <tr>
+            <td><%= treino.id %></td>
+            <td><%= treino.aluno&.nome %></td>
+            <td><%= treino.professor&.nome %></td>
+            <td><%= treino.objetivo %></td>
+            <td>
+              <a href="/treinos/<%= treino.id %>/edit" class="btn btn-sm btn-warning">✏️</a>
+              <form action="/treinos/<%= treino.id %>" method="POST" style="display:inline;">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover este treino?\n\nEsta ação não pode ser desfeita.')">🗑️</button>
+              </form>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex justify-content-center mt-3">
+    <%= paginate @treinos %>
+  </div>
+</div>

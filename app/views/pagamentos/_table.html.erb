@@ -1,0 +1,32 @@
+<div class="table-responsive">
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Aluno</th>
+        <th>Valor</th>
+        <th>Status</th>
+        <th>Data</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% pagamentos.each do |pag| %>
+        <tr>
+          <td><%= pag.id %></td>
+          <td><%= pag.aluno&.nome %></td>
+          <td>R$ <%= number_with_precision(pag.valor, precision: 2) %></td>
+          <td><span class="badge bg-info"><%= pag.status %></span></td>
+          <td><%= pag.data_pagamento&.strftime('%d/%m/%Y') %></td>
+          <td>
+            <%= link_to "✏️", edit_pagamento_path(pag), class: "btn btn-sm btn-warning" %>
+            <%= link_to "🗑️", pagamento_path(pag), method: :delete, data: { confirm: "Tem certeza?" }, class: "btn btn-sm btn-danger" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<div class="d-flex justify-content-center mt-3">
+  <%= paginate pagamentos %>
+</div>

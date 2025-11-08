@@ -1,40 +1,82 @@
-class TreinosController < ActionController::API
-  before_action :set_treino, only: [:show, :update, :destroy]
+require 'csv'
 
-  # GET /treinos
+class TreinosController < ApplicationController
+  before_action :set_treino, only: [:show, :edit, :update, :destroy]
+
   def index
-    @treinos = Treino.all
-    render json: @treinos
+    @treinos = Treino.page(params[:page]).per(10)
   end
 
-  # GET /treinos/:id
-  def show
-    render json: @treino
+  def new
+    @treino = Treino.new
   end
 
-  # POST /treinos
   def create
     @treino = Treino.new(treino_params)
     if @treino.save
-      render json: @treino, status: :created
+      redirect_to treinos_path, notice: 'Treino criado com sucesso.'
     else
-      render json: { errors: @treino.errors.full_messages }, status: :unprocessable_entity
+      render :new
     end
   end
 
-  # PATCH/PUT /treinos/:id
+  def show
+  end
+
+  def edit
+  end
+
   def update
     if @treino.update(treino_params)
-      render json: @treino
+      redirect_to treinos_path, notice: 'Treino atualizado com sucesso.'
     else
-      render json: @treino.errors, status: :unprocessable_entity
+      render :edit
     end
   end
 
-  # DELETE /treinos/:id
   def destroy
-    @treino.destroy
-    head :no_content
+    begin
+      @treino.destroy
+      redirect_to treinos_path, notice: 'Treino deletado com sucesso.'
+    rescue ActiveRecord::InvalidForeignKey
+      redirect_to treinos_path, alert: '⚠️ Não é possível deletar este treino no momento.'
+    end
+  end
+
+  def export_csv
+    @treinos = Treino.all
+    respond_to do |format|
+      format.csv { 
+        send_data csv_treinos, filename: "treinos_#{Date.today}.csv"
+      }
+    end
+  end
+
+  def export_pdf
+    @treinos = Treino.includes(:aluno, :professor).all
+    respond_to do |format|
+      format.pdf do
+        pdf = PdfTableExporter.generate(
+          title: 'Relatório de Treinos',
+          headers: ['ID', 'Aluno', 'Professor', 'Objetivo', 'Início', 'Fim', 'Observações'],
+          rows: @treinos.map do |treino|
+            [
+              treino.id,
+              treino.aluno&.nome,
+              treino.professor&.nome,
+              treino.objetivo,
+              treino.data_inicio&.strftime('%d/%m/%Y') || '—',
+              treino.data_fim&.strftime('%d/%m/%Y') || '—',
+              treino.observacoes || '—'
+            ]
+          end
+        )
+        send_data pdf.render,
+                  filename: "treinos_#{Date.today}.pdf",
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
   end
 
   private
@@ -45,11 +87,16 @@ class TreinosController < ActionController::API
 
   def treino_params
     params.require(:treino).permit(
-      :aluno_id,
-      :professor_id,
-      :objetivo,
-      :data_inicio,
-      :data_fim,
-      :observacoes)
+      :aluno_id, :professor_id, :objetivo, :data_inicio, :data_fim, :observacoes
+    )
+  end
+
+  def csv_treinos
+    CSV.generate(headers: true) do |csv|
+      csv << ['ID', 'Aluno', 'Professor', 'Objetivo', 'Data Início']
+      Treino.all.each do |treino|
+        csv << [treino.id, treino.aluno&.nome, treino.professor&.nome, treino.objetivo, treino.data_inicio]
+      end
+    end
   end
 end

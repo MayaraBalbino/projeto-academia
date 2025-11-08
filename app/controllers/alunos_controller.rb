@@ -1,40 +1,70 @@
-class AlunosController < ActionController::API
-  before_action :set_aluno, only: [:show, :update, :destroy]
+class AlunosController < ApplicationController
+  before_action :set_aluno, only: [:show, :edit, :update, :destroy]
 
-  # GET /alunos
   def index
-    @alunos = Aluno.all
-    render json: @alunos
+    @alunos = Aluno.includes(:plano).page(params[:page]).per(10)
   end
 
-  # GET /alunos/:id
-  def show
-    render json: @aluno
+  def new
+    @aluno = Aluno.new
   end
 
-  # POST /alunos
   def create
     @aluno = Aluno.new(aluno_params)
     if @aluno.save
-      render json: @aluno, status: :created
+      redirect_to alunos_path, notice: 'Aluno cadastrado com sucesso.'
     else
-      render json: @aluno.errors, status: :unprocessable_entity
+      render :new
     end
   end
 
-  # PATCH/PUT /alunos/:id
+  def show
+  end
+
+  def edit
+  end
+
   def update
     if @aluno.update(aluno_params)
-      render json: @aluno
+      redirect_to alunos_path, notice: 'Aluno atualizado com sucesso.'
     else
-      render json: @aluno.errors, status: :unprocessable_entity
+      render :edit
     end
   end
 
-  # DELETE /alunos/:id
   def destroy
-    @aluno.destroy
-    head :no_content
+    begin
+      @aluno.destroy
+      redirect_to alunos_path, notice: 'Aluno deletado com sucesso.'
+    rescue ActiveRecord::InvalidForeignKey
+      redirect_to alunos_path, alert: '⚠️ Não é possível deletar este aluno porque ele tem pagamentos ou treinos vinculados.'
+    end
+  end
+
+  def export_pdf
+    @alunos = Aluno.includes(:plano).all
+    respond_to do |format|
+      format.pdf do
+        pdf = PdfTableExporter.generate(
+          title: 'Relatório de Alunos',
+          headers: ['ID', 'Nome', 'CPF', 'Plano', 'Telefone', 'Status'],
+          rows: @alunos.map do |aluno|
+            [
+              aluno.id,
+              aluno.nome,
+              aluno.cpf,
+              aluno.plano&.nome_plano,
+              aluno.telefone,
+              aluno.status
+            ]
+          end
+        )
+        send_data pdf.render,
+                  filename: "alunos_#{Date.today}.pdf",
+                  type: 'application/pdf',
+                  disposition: 'inline'
+      end
+    end
   end
 
   private
@@ -46,6 +76,4 @@ class AlunosController < ActionController::API
   def aluno_params
     params.require(:aluno).permit(:nome, :cpf, :email, :telefone, :data_nascimento, :status, :plano_id)
   end
-
-
 end

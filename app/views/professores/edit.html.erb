@@ -1,0 +1,99 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-warning">
+          <h5 class="mb-0">✏️ Editar Professor</h5>
+        </div>
+        <div class="card-body">
+          <% if @professor.errors.any? %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+              <h5><%= pluralize(@professor.errors.count, "erro") %> impediu que este professor fosse salvo:</h5>
+              <ul class="mb-0">
+                <% @professor.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          <% end %>
+
+          <form action="/professores/<%= @professor.id %>" method="POST" id="professor-form">
+            <input type="hidden" name="_method" value="PATCH">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            
+            <div class="mb-3">
+              <label class="form-label">Nome</label>
+              <input type="text" name="professor[nome]" class="form-control" value="<%= @professor.nome %>" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">CPF</label>
+              <input type="text" name="professor[cpf]" id="cpf_input" class="form-control" value="<%= @professor.cpf %>" required maxlength="14">
+              <small class="text-muted">Apenas números (11 dígitos)</small>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" name="professor[email]" class="form-control" value="<%= @professor.email %>" required>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Telefone</label>
+              <input type="text" name="professor[telefone]" class="form-control" value="<%= @professor.telefone %>">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Especialidade</label>
+              <input type="text" name="professor[especialidade]" class="form-control" value="<%= @professor.especialidade %>">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Data Contratação</label>
+              <input type="date" name="professor[data_contratacao]" class="form-control" value="<%= @professor.data_contratacao&.strftime('%Y-%m-%d') %>">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Salário</label>
+              <input type="number" name="professor[salario]" step="0.01" class="form-control" value="<%= @professor.salario %>">
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="/professores" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function formatCpf(value) {
+    value = value.replace(/\D/g, '').substring(0, 11);
+    
+    if (value.length > 9) {
+      return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    } else if (value.length > 6) {
+      return value.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+    } else if (value.length > 3) {
+      return value.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+    }
+    return value;
+  }
+
+  const cpfInput = document.getElementById('cpf_input');
+  if (cpfInput.value) {
+    cpfInput.value = formatCpf(cpfInput.value);
+  }
+
+  cpfInput.addEventListener('input', function(e) {
+    e.target.value = formatCpf(e.target.value);
+  });
+
+  document.getElementById('professor-form').addEventListener('submit', function(e) {
+    const cpf = document.getElementById('cpf_input');
+    cpf.value = cpf.value.replace(/\D/g, '');
+  });
+</script>

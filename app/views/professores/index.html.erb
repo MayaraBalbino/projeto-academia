@@ -1,0 +1,49 @@
+<div class="container mt-5">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>🎓 Professores</h1>
+    <div class="mb-3">
+      <a href="/professores/new" class="btn btn-success">➕ Adicionar</a>
+      <a href="/professores/export_pdf?format=pdf" class="btn btn-warning">📄 Exportar PDF</a>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Especialidade</th>
+          <th>Email</th>
+          <th>Data Contratação</th>
+          <th>Salário</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @professores.each do |prof| %>
+          <tr>
+            <td><%= prof.id %></td>
+            <td><%= prof.nome %></td>
+            <td><%= prof.especialidade %></td>
+            <td><%= prof.email %></td>
+            <td><%= prof.data_contratacao&.strftime('%d/%m/%Y') || '—' %></td>
+            <td>R$ <%= number_with_precision(prof.salario, precision: 2, delimiter: '.', separator: ',') if prof.salario %></td>
+            <td>
+              <a href="/professores/<%= prof.id %>/edit" class="btn btn-sm btn-warning">✏️</a>
+              <form action="/professores/<%= prof.id %>" method="POST" style="display:inline;">
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja remover este professor?\n\nEsta ação não pode ser desfeita.')">🗑️</button>
+              </form>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex justify-content-center mt-3">
+    <%= paginate @professores %>
+  </div>
+</div>

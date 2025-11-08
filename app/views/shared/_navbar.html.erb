@@ -1,0 +1,59 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a href="/" class="navbar-brand">🏋️ Academia</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <% if user_signed_in? %>
+          <li class="nav-item">
+            <a href="/" class="nav-link">🏠 Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="/alunos" class="nav-link">👥 Alunos</a>
+          </li>
+          <li class="nav-item">
+            <a href="/professores" class="nav-link">🎓 Professores</a>
+          </li>
+          <li class="nav-item">
+            <a href="/planos" class="nav-link">📋 Planos</a>
+          </li>
+          <li class="nav-item">
+            <a href="/pagamentos" class="nav-link">💰 Pagamentos</a>
+          </li>
+          <li class="nav-item">
+            <a href="/treinos" class="nav-link">🏋️ Treinos</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+              👤 <%= current_user.nome || current_user.email %>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <%= link_to "👤 Meu Perfil", profile_path, class: "dropdown-item" %>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="POST" action="<%= destroy_user_session_path %>" class="d-inline">
+                  <input type="hidden" name="_method" value="DELETE">
+                  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+                  <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer; padding: 0.5rem 1rem; margin: 0;">
+                    Sair
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+        <% else %>
+          <li class="nav-item">
+            <%= link_to "🔐 Entrar", new_user_session_path, class: "nav-link" %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "📝 Cadastrar", new_user_registration_path, class: "nav-link" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>

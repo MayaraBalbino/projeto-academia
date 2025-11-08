@@ -1,0 +1,93 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header bg-danger text-white">
+          <h5 class="mb-0">➕ Adicionar Pagamento</h5>
+        </div>
+        <div class="card-body">
+          <form action="/pagamentos" method="POST">
+            <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+            
+            <div class="mb-3">
+              <label class="form-label">Aluno</label>
+              <select name="pagamento[aluno_id]" id="aluno_select" class="form-select" required>
+                <option value="">Selecione um aluno</option>
+                <% Aluno.all.each do |aluno| %>
+                  <option value="<%= aluno.id %>"><%= aluno.nome %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Plano</label>
+              <select name="pagamento[plano_id]" id="plano_select" class="form-select" required disabled>
+                <option value="">Selecione um plano</option>
+                <% Plano.all.each do |plano| %>
+                  <option value="<%= plano.id %>"><%= plano.nome_plano %></option>
+                <% end %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Valor</label>
+              <input type="number" name="pagamento[valor]" id="valor_input" class="form-control" step="0.01" required readonly>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Data Vencimento</label>
+              <input type="date" name="pagamento[data_vencimento]" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Data Pagamento</label>
+              <input type="date" name="pagamento[data_pagamento]" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Status</label>
+              <select name="pagamento[status]" class="form-select">
+                <option value="pendente">Pendente</option>
+                <option value="pago">Pago</option>
+                <option value="atrasado">Atrasado</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Forma de Pagamento</label>
+              <input type="text" name="pagamento[forma_pagamento]" class="form-control">
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="/pagamentos" class="btn btn-secondary">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('aluno_select').addEventListener('change', async function() {
+    const alunoId = this.value;
+    if (!alunoId) {
+      document.getElementById('plano_select').value = '';
+      document.getElementById('valor_input').value = '';
+      document.getElementById('plano_select').disabled = true;
+      return;
+    }
+
+    try {
+      const response = await fetch(`/pagamentos/${alunoId}/aluno_data`);
+      const data = await response.json();
+      
+      document.getElementById('plano_select').value = data.plano_id;
+      document.getElementById('plano_select').disabled = false;
+      document.getElementById('valor_input').value = data.valor;
+    } catch (error) {
+      console.error('Erro ao buscar dados do aluno:', error);
+    }
+  });
+</script>
