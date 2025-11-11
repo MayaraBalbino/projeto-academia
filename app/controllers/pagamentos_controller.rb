@@ -1,16 +1,20 @@
 require 'csv'
 
+# CRUD completo de Pagamentos Mensais
 class PagamentosController < ApplicationController
   before_action :set_pagamento, only: [:show, :edit, :update, :destroy]
 
+  # Lista todos os pagamentos com paginação, mais recentes primeiro
   def index
-    @pagamentos = Pagamento.page(params[:page]).per(10)
+    @pagamentos = Pagamento.order(created_at: :desc).page(params[:page]).per(10)
   end
 
+  # Exibe formulário de novo pagamento
   def new
     @pagamento = Pagamento.new
   end
 
+  # Cria novo pagamento
   def create
     @pagamento = Pagamento.new(pagamento_params)
     if @pagamento.save
@@ -20,12 +24,15 @@ class PagamentosController < ApplicationController
     end
   end
 
+  # Exibe detalhes do pagamento
   def show
   end
 
+  # Exibe formulário de edição
   def edit
   end
 
+  # Atualiza dados do pagamento
   def update
     if @pagamento.update(pagamento_params)
       redirect_to pagamentos_path, notice: 'Pagamento atualizado com sucesso.'
@@ -34,6 +41,7 @@ class PagamentosController < ApplicationController
     end
   end
 
+  # Deleta pagamento
   def destroy
     begin
       @pagamento.destroy
@@ -43,15 +51,7 @@ class PagamentosController < ApplicationController
     end
   end
 
-  def export_csv
-    @pagamentos = Pagamento.all
-    respond_to do |format|
-      format.csv { 
-        send_data csv_pagamentos, filename: "pagamentos_#{Date.today}.csv"
-      }
-    end
-  end
-
+  # Exporta todos os pagamentos em PDF
   def export_pdf
     @pagamentos = Pagamento.includes(:aluno, :plano).all
     respond_to do |format|
@@ -81,6 +81,7 @@ class PagamentosController < ApplicationController
     end
   end
 
+  # Retorna dados do aluno em JSON (usado no formulário para preencher plano e valor automaticamente)
   def aluno_data
     aluno = Aluno.includes(:plano).find(params[:id])
     render json: {
@@ -101,14 +102,5 @@ class PagamentosController < ApplicationController
       :aluno_id, :plano_id, :data_pagamento, :data_vencimento,
       :valor, :forma_pagamento, :referente_a, :status
     )
-  end
-
-  def csv_pagamentos
-    CSV.generate(headers: true) do |csv|
-      csv << ['ID', 'Aluno', 'Plano', 'Valor', 'Status']
-      Pagamento.all.each do |pag|
-        csv << [pag.id, pag.aluno&.nome, pag.plano&.nome_plano, pag.valor, pag.status]
-      end
-    end
   end
 end

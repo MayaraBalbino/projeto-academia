@@ -1,16 +1,20 @@
 require 'csv'
 
+# CRUD completo de Professores
 class ProfessoresController < ApplicationController
   before_action :set_professor, only: [:show, :edit, :update, :destroy]
 
+  # Lista todos os professores com paginação, mais recentes primeiro
   def index
-    @professores = Professor.page(params[:page]).per(10)
+    @professores = Professor.order(created_at: :desc).page(params[:page]).per(10)
   end
 
+  # Exibe formulário de novo professor
   def new
     @professor = Professor.new
   end
 
+  # Cria novo professor
   def create
     @professor = Professor.new(professor_params)
     if @professor.save
@@ -21,12 +25,15 @@ class ProfessoresController < ApplicationController
     end
   end
 
+  # Exibe detalhes do professor
   def show
   end
 
+  # Exibe formulário de edição
   def edit
   end
 
+  # Atualiza dados do professor
   def update
     if @professor.update(professor_params)
       redirect_to professores_path, notice: 'Professor atualizado com sucesso.'
@@ -36,6 +43,7 @@ class ProfessoresController < ApplicationController
     end
   end
 
+  # Deleta professor (não permite se tiver treinos vinculados)
   def destroy
     begin
       @professor.destroy
@@ -45,15 +53,7 @@ class ProfessoresController < ApplicationController
     end
   end
 
-  def export_csv
-    @professores = Professor.all
-    respond_to do |format|
-      format.csv { 
-        send_data csv_professores, filename: "professores_#{Date.today}.csv"
-      }
-    end
-  end
-
+  # Exporta todos os professores em PDF
   def export_pdf
     @professores = Professor.all
     respond_to do |format|
@@ -89,14 +89,5 @@ class ProfessoresController < ApplicationController
 
   def professor_params
     params.require(:professor).permit(:nome, :cpf, :email, :telefone, :especialidade, :data_contratacao, :salario)
-  end
-
-  def csv_professores
-    CSV.generate(headers: true) do |csv|
-      csv << ['ID', 'Nome', 'Especialidade', 'Email']
-      Professor.all.each do |prof|
-        csv << [prof.id, prof.nome, prof.especialidade, prof.email]
-      end
-    end
   end
 end
