@@ -1,16 +1,20 @@
 require 'csv'
 
+# CRUD completo de Treinos (vincula Aluno + Professor)
 class TreinosController < ApplicationController
   before_action :set_treino, only: [:show, :edit, :update, :destroy]
 
+  # Lista todos os treinos com paginação, mais recentes primeiro
   def index
-    @treinos = Treino.page(params[:page]).per(10)
+    @treinos = Treino.order(created_at: :desc).page(params[:page]).per(10)
   end
 
+  # Exibe formulário de novo treino
   def new
     @treino = Treino.new
   end
 
+  # Cria novo treino
   def create
     @treino = Treino.new(treino_params)
     if @treino.save
@@ -20,12 +24,15 @@ class TreinosController < ApplicationController
     end
   end
 
+  # Exibe detalhes do treino
   def show
   end
 
+  # Exibe formulário de edição
   def edit
   end
 
+  # Atualiza dados do treino
   def update
     if @treino.update(treino_params)
       redirect_to treinos_path, notice: 'Treino atualizado com sucesso.'
@@ -34,6 +41,7 @@ class TreinosController < ApplicationController
     end
   end
 
+  # Deleta treino
   def destroy
     begin
       @treino.destroy
@@ -43,15 +51,7 @@ class TreinosController < ApplicationController
     end
   end
 
-  def export_csv
-    @treinos = Treino.all
-    respond_to do |format|
-      format.csv { 
-        send_data csv_treinos, filename: "treinos_#{Date.today}.csv"
-      }
-    end
-  end
-
+  # Exporta todos os treinos em PDF
   def export_pdf
     @treinos = Treino.includes(:aluno, :professor).all
     respond_to do |format|
@@ -89,14 +89,5 @@ class TreinosController < ApplicationController
     params.require(:treino).permit(
       :aluno_id, :professor_id, :objetivo, :data_inicio, :data_fim, :observacoes
     )
-  end
-
-  def csv_treinos
-    CSV.generate(headers: true) do |csv|
-      csv << ['ID', 'Aluno', 'Professor', 'Objetivo', 'Data Início']
-      Treino.all.each do |treino|
-        csv << [treino.id, treino.aluno&.nome, treino.professor&.nome, treino.objetivo, treino.data_inicio]
-      end
-    end
   end
 end

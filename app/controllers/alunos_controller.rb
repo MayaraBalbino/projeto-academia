@@ -1,14 +1,18 @@
+# CRUD completo de Alunos
 class AlunosController < ApplicationController
   before_action :set_aluno, only: [:show, :edit, :update, :destroy]
 
+  # Lista todos os alunos com paginação (10 por página), mais recentes primeiro
   def index
-    @alunos = Aluno.includes(:plano).page(params[:page]).per(10)
+    @alunos = Aluno.includes(:plano).order(created_at: :desc).page(params[:page]).per(10)
   end
 
+  # Exibe formulário de novo aluno
   def new
     @aluno = Aluno.new
   end
 
+  # Cria novo aluno no banco
   def create
     @aluno = Aluno.new(aluno_params)
     if @aluno.save
@@ -18,12 +22,15 @@ class AlunosController < ApplicationController
     end
   end
 
+  # Exibe detalhes de um aluno
   def show
   end
 
+  # Exibe formulário de edição
   def edit
   end
 
+  # Atualiza dados do aluno
   def update
     if @aluno.update(aluno_params)
       redirect_to alunos_path, notice: 'Aluno atualizado com sucesso.'
@@ -32,6 +39,7 @@ class AlunosController < ApplicationController
     end
   end
 
+  # Deleta aluno (com proteção para foreign keys)
   def destroy
     begin
       @aluno.destroy
@@ -41,6 +49,7 @@ class AlunosController < ApplicationController
     end
   end
 
+  # Exporta todos os alunos em PDF
   def export_pdf
     @alunos = Aluno.includes(:plano).all
     respond_to do |format|
@@ -69,10 +78,12 @@ class AlunosController < ApplicationController
 
   private
 
+  # Busca aluno pelo ID
   def set_aluno
     @aluno = Aluno.find(params[:id])
   end
 
+  # Define parâmetros permitidos para criar/atualizar aluno
   def aluno_params
     params.require(:aluno).permit(:nome, :cpf, :email, :telefone, :data_nascimento, :status, :plano_id)
   end

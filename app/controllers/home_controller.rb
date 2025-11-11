@@ -1,14 +1,12 @@
 require 'csv'
 
+# Gerencia a dashboard (página inicial) e exportação geral em CSV
 class HomeController < ApplicationController
   def index
-    @alunos = Aluno.page(params[:aluno_page]).per(5)
-    @professores = Professor.page(params[:professor_page]).per(5)
-    @planos = Plano.page(params[:plano_page]).per(5)
-    @pagamentos = Pagamento.page(params[:pagamento_page]).per(5)
-    @treinos = Treino.page(params[:treino_page]).per(5)
+    # Apenas renderiza a view com os cards - não precisa carregar dados
   end
 
+  # Exporta TODOS os dados do sistema em um único arquivo CSV
   def export_dashboard_csv
     csv_data = "\xEF\xBB\xBF" + dashboard_csv
     send_data csv_data,
@@ -19,6 +17,7 @@ class HomeController < ApplicationController
 
   private
 
+  # Gera CSV com todas as seções (Alunos, Professores, Planos, Pagamentos, Treinos)
   def dashboard_csv
     CSV.generate(col_sep: ';', encoding: 'UTF-8') do |csv|
       append_section(csv, 'Alunos', %w[ID Nome Email CPF Telefone DataNascimento Status Plano]) do
@@ -95,6 +94,7 @@ class HomeController < ApplicationController
     end
   end
 
+  # Adiciona uma seção no CSV com título e cabeçalhos
   def append_section(csv, title, headers)
     csv << [title]
     csv << headers
@@ -102,6 +102,7 @@ class HomeController < ApplicationController
     csv << []
   end
 
+  # Formata CPF para exibição no Excel sem perder zeros à esquerda
   def format_cpf(cpf)
     return '' unless cpf.present?
     cpf = cpf.to_s.gsub(/\D/, '')
@@ -109,6 +110,7 @@ class HomeController < ApplicationController
     "=\"#{cpf[0..2]}.#{cpf[3..5]}.#{cpf[6..8]}-#{cpf[9..10]}\""
   end
 
+  # Formata telefone para exibição no Excel
   def format_telefone(telefone)
     return '' unless telefone.present?
     "=\"#{telefone}\""

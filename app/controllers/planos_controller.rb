@@ -1,16 +1,20 @@
 require 'csv'
 
+# CRUD completo de Planos de Academia
 class PlanosController < ApplicationController
   before_action :set_plano, only: [:show, :edit, :update, :destroy]
 
+  # Lista todos os planos com paginação, mais recentes primeiro
   def index
-    @planos = Plano.page(params[:page]).per(10)
+    @planos = Plano.order(created_at: :desc).page(params[:page]).per(10)
   end
 
+  # Exibe formulário de novo plano
   def new
     @plano = Plano.new
   end
 
+  # Cria novo plano
   def create
     @plano = Plano.new(plano_params)
     if @plano.save
@@ -20,12 +24,15 @@ class PlanosController < ApplicationController
     end
   end
 
+  # Exibe detalhes do plano
   def show
   end
 
+  # Exibe formulário de edição
   def edit
   end
 
+  # Atualiza dados do plano
   def update
     if @plano.update(plano_params)
       redirect_to planos_path, notice: 'Plano atualizado com sucesso.'
@@ -34,6 +41,7 @@ class PlanosController < ApplicationController
     end
   end
 
+  # Deleta plano (não permite se houver alunos usando)
   def destroy
     begin
       @plano.destroy
@@ -43,15 +51,7 @@ class PlanosController < ApplicationController
     end
   end
 
-  def export_csv
-    @planos = Plano.all
-    respond_to do |format|
-      format.csv { 
-        send_data csv_planos, filename: "planos_#{Date.today}.csv"
-      }
-    end
-  end
-
+  # Exporta todos os planos em PDF
   def export_pdf
     @planos = Plano.all
     respond_to do |format|
@@ -85,14 +85,5 @@ class PlanosController < ApplicationController
 
   def plano_params
     params.require(:plano).permit(:nome_plano, :descricao, :valor_mensal, :duracao_meses)
-  end
-
-  def csv_planos
-    CSV.generate(headers: true) do |csv|
-      csv << ['ID', 'Nome do Plano', 'Valor Mensal', 'Duração']
-      Plano.all.each do |plano|
-        csv << [plano.id, plano.nome_plano, plano.valor_mensal, plano.duracao_meses]
-      end
-    end
   end
 end
