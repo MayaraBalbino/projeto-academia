@@ -43,7 +43,7 @@ gem "image_processing", "~> 1.2"
 gem 'prawn'
 gem 'prawn-table'
 
-gem 'rails-i18n', '~> 8.0.0'
+gem 'rails-i18n', '~> 8.1.0'
 gem 'devise-i18n'
 
 group :development, :test do
